@@ -16,6 +16,7 @@ namespace DataAccess
         public DbSet<Author> Authors { get; set; }
         public DbSet<Category> Categories { get; set; }
         #endregion
+
         public APIContext(DbContextOptions<APIContext> options) : base(options)
         {
 
