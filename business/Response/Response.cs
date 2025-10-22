@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Business.Response
 {
-    public class Response : IResponse
+    public class Response
     {
         public bool IsSuccess { get; protected set;}
 

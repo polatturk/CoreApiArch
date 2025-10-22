@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Business.Response
 {
-    public interface IResponse
+    public interface IResponse<T>
     {
         bool IsSuccess { get; }
         string Message { get; }
+        public T Data { get; }
     }
 }
