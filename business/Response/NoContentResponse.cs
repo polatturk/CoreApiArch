@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Business.Response
 {
-    internal class NoContentResponse
+    public class NoContentResponse : Response
     {
+        public NoContentResponse() : base(true, "No Content") 
+        {
+        }
+
+        public static NoContentResponse Success() {  return new NoContentResponse(); }
+          
     }
 }
