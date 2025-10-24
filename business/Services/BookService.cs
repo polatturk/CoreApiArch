@@ -55,7 +55,7 @@ namespace Business.Services
             return ResponseGeneric<Book>.Success(book, "Kitap başarıyla bulundu.");
         }
 
-        public IResponse<IEnumerable<Book>> GetByTitle(string title)
+        public IResponse<IEnumerable<Book>> GetByName(string title)
         {
             var bookList = _bookRepository.GetAll().Where(x => x.Title == title).ToList();
 
