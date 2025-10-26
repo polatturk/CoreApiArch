@@ -22,71 +22,113 @@ namespace Business.Services
 
         public Task<IResponse<Book>> Create(Book book)
         {
-            if (book == null)
+            try
             {
-                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Kitap bilgileri boş olamaz."));
+                if (book == null)
+                {
+                    return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Kitap bilgileri boş olamaz."));
+                }
+                _bookRepository.Create(book);
+                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Success(book, "Kitap başarıyla oluşturuldu."));
             }
-            _bookRepository.Create(book);
-            return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Success(book, "Kitap başarıyla oluşturuldu."));
+            catch
+            {
+                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu."));
+            }
         }
 
         public IResponse<Book> Delete(int id)
         {
-            var book = _bookRepository.GetByIdAsync(id).Result;
-
-            if (book == null)
+            try
             {
-                return ResponseGeneric<Book>.Error("Kitap bulunamadı.");
+                var book = _bookRepository.GetByIdAsync(id).Result;
 
+                if (book == null)
+                {
+                    return ResponseGeneric<Book>.Error("Kitap bulunamadı.");
+
+                }
+                _bookRepository.Delete(book);
+                return ResponseGeneric<Book>.Success(book, "Kitap başarıyla silindi.");
             }
-            _bookRepository.Delete(book);
-            return ResponseGeneric<Book>.Success(book, "Kitap başarıyla silindi.");
+            catch 
+            {
+                return ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<Book> GetById(int id)
         {
-            var book = _bookRepository.GetByIdAsync(id).Result;
-
-            if (book == null)
+            try
             {
-                return ResponseGeneric<Book>.Error("Kitap bulunamadı.");
+                var book = _bookRepository.GetByIdAsync(id).Result;
 
+                if (book == null)
+                {
+                    return ResponseGeneric<Book>.Error("Kitap bulunamadı.");
+
+                }
+                return ResponseGeneric<Book>.Success(book, "Kitap başarıyla bulundu.");
             }
-            return ResponseGeneric<Book>.Success(book, "Kitap başarıyla bulundu.");
+            catch
+            {
+                return ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<IEnumerable<Book>> GetByName(string title)
         {
-            var bookList = _bookRepository.GetAll().Where(x => x.Title == title).ToList();
-
-            if (bookList == null || bookList.Count == 0)
+            try
             {
-                return ResponseGeneric<IEnumerable<Book>>.Error("Kitap bulunamadı.");
+                var bookList = _bookRepository.GetAll().Where(x => x.Title == title).ToList();
 
+                if (bookList == null || bookList.Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<Book>>.Error("Kitap bulunamadı.");
+
+                }
+                return ResponseGeneric<IEnumerable<Book>>.Success(bookList, "Kitap başarıyla bulundu.");
             }
-            return ResponseGeneric<IEnumerable<Book>>.Success(bookList, "Kitap başarıyla bulundu.");
+            catch
+            {
+                return ResponseGeneric<IEnumerable<Book>>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<IEnumerable<Book>> ListAll()
         {
-            var allBooks = _bookRepository.GetAll().ToList();
-
-            if (allBooks == null || allBooks.Count == 0)
+            try
             {
-                return ResponseGeneric<IEnumerable<Book>>.Error("Kitaplar bulunamadı.");
+                var allBooks = _bookRepository.GetAll().ToList();
+
+                if (allBooks == null || allBooks.Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<Book>>.Error("Kitaplar bulunamadı.");
+                }
+                return ResponseGeneric<IEnumerable<Book>>.Success(allBooks, "Kitaplar başarıyla listelendi.");
             }
-            return ResponseGeneric<IEnumerable<Book>>.Success(allBooks, "Kitaplar başarıyla listelendi.");
+            catch
+            {
+                return ResponseGeneric<IEnumerable<Book>>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public Task<IResponse<Book>> Update(Book book)
         {
-            if (book == null)
+            try
             {
-                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Kitap bulunamadı"));
+                if (book == null)
+                {
+                    return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Kitap bulunamadı."));
 
+                }
+                _bookRepository.Update(book);
+                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Success(book, "Kitap başarıyla güncellendi."));
             }
-            _bookRepository.Update(book);
-            return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Success(book, "Kitap başarıyla güncellendi"));
+            catch
+            {
+                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu."));
+            }
         }
     }
 }

@@ -24,74 +24,113 @@ namespace Business.Services
 
         public Task<IResponse<Author>> Create(Author author)
         {
-            if (author == null)
+            try
             {
-                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bilgileri boş olamaz."));
+                if (author == null)
+                {
+                    return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bilgileri boş olamaz."));
+                }
+                _authorRepository.Create(author);
+                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(author, "Yazar başarıyla oluşturuldu."));
             }
-            _authorRepository.Create(author);
-            return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(author, "Yazar başarıyla oluşturuldu."));
-
+            catch
+            {
+                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Beklenmeyen bir hata oluştu."));
+            }
         }
 
         public IResponse<Author> Delete(int id) 
         {
-            var author = _authorRepository.GetByIdAsync(id).Result;
-
-            if (author == null)
+            try
             {
-                return ResponseGeneric<Author>.Error("Yazar bulunamadı.");
+                var author = _authorRepository.GetByIdAsync(id).Result;
 
+                if (author == null)
+                {
+                    return ResponseGeneric<Author>.Error("Yazar bulunamadı.");
+
+                }
+                _authorRepository.Delete(author);
+                return ResponseGeneric<Author>.Success(author, "Yazar başarıyla silindi.");
             }
-            _authorRepository.Delete(author);
-            return ResponseGeneric<Author>.Success(author, "Yazar başarıyla silindi.");
+            catch
+            {
+                return ResponseGeneric<Author>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<Author> GetById(int id)
         {
-            var author = _authorRepository.GetByIdAsync(id).Result;
-
-            if (author == null)
+            try
             {
-                return ResponseGeneric<Author>.Error("Yazar bulunamadı.");
+                var author = _authorRepository.GetByIdAsync(id).Result;
 
+                if (author == null)
+                {
+                    return ResponseGeneric<Author>.Error("Yazar bulunamadı.");
+
+                }
+                return ResponseGeneric<Author>.Success(author, "Yazar başarıyla bulundu.");
             }
-            return ResponseGeneric<Author>.Success(author, "Yazar başarıyla bulundu.");
+            catch
+            {
+                return ResponseGeneric<Author>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<IEnumerable<Author>> GetByName(string name)
         {
-            var authorList = _authorRepository.GetAll().Where(x => x.Name == name).ToList();
-
-            if (authorList == null || authorList.Count == 0) 
+            try
             {
-                return ResponseGeneric<IEnumerable<Author>>.Error("Yazar bulunamadı.");
+                var authorList = _authorRepository.GetAll().Where(x => x.Name == name).ToList();
 
+                if (authorList == null || authorList.Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<Author>>.Error("Yazar bulunamadı.");
+
+                }
+                return ResponseGeneric<IEnumerable<Author>>.Success(authorList, "Yazar başarıyla bulundu.");
             }
-            return ResponseGeneric<IEnumerable<Author>>.Success(authorList, "Yazar başarıyla bulundu.");
+            catch
+            {
+                return ResponseGeneric<IEnumerable<Author>>.Error("Beklenmeyen bir hata oluştu.");
+            }      
         }
 
         public IResponse<IEnumerable<Author>> ListAll()
         {
-            var allAuthors = _authorRepository.GetAll().ToList();
-
-            if(allAuthors == null || allAuthors.Count == 0)
+            try
             {
-                return ResponseGeneric<IEnumerable<Author>>.Error("Yazarlar bulunamadı.");
-            }
-            return ResponseGeneric<IEnumerable<Author>>.Success(allAuthors, "Yazarlar başarıyla listelendi.");
+                var allAuthors = _authorRepository.GetAll().ToList();
 
+                if (allAuthors == null || allAuthors.Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<Author>>.Error("Yazarlar bulunamadı.");
+                }
+                return ResponseGeneric<IEnumerable<Author>>.Success(allAuthors, "Yazarlar başarıyla listelendi.");
+            }
+            catch
+            {
+                return ResponseGeneric<IEnumerable<Author>>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public Task<IResponse<Author>> Update(Author author)
         {
-
-            if (author == null)
+            try
             {
-                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bulunamadı"));
+                if (author == null)
+                {
+                    return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bulunamadı"));
 
+                }
+                _authorRepository.Update(author);
+                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(author, "Yazar başarıyla güncellendi"));
             }
-            _authorRepository.Update(author);
-            return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(author, "Yazar başarıyla güncellendi"));
+            catch
+            {
+                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Beklenmeyen bir hata oluştu."));
+            }
         }
     }
 }
