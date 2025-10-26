@@ -23,71 +23,113 @@ namespace Business.Services
 
         public Task<IResponse<Category>> Create(Category category)
         {
-            if (category == null)
+            try
             {
-                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Kategori bilgileri boş olamaz."));
+                if (category == null)
+                {
+                    return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Kategori bilgileri boş olamaz."));
+                }
+                _categoryRepository.Create(category);
+                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Success(category, "Kategori başarıyla oluşturuldu."));
             }
-            _categoryRepository.Create(category);
-            return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Success(category, "Kategori başarıyla oluşturuldu."));
+            catch
+            {
+                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Beklenmeyen bir hata oluştu."));
+            }
         }
 
         public IResponse<Category> Delete(int id)
         {
-            var category = _categoryRepository.GetByIdAsync(id).Result;
-
-            if (category == null)
+            try
             {
-                return ResponseGeneric<Category>.Error("Kategori bulunamadı.");
+                var category = _categoryRepository.GetByIdAsync(id).Result;
 
+                if (category == null)
+                {
+                    return ResponseGeneric<Category>.Error("Kategori bulunamadı.");
+
+                }
+                _categoryRepository.Delete(category);
+                return ResponseGeneric<Category>.Success(category, "Kategori başarıyla silindi.");
             }
-            _categoryRepository.Delete(category);
-            return ResponseGeneric<Category>.Success(category, "Kategori başarıyla silindi.");
+            catch
+            {
+                return ResponseGeneric<Category>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<Category> GetById(int id)
         {
-            var category = _categoryRepository.GetByIdAsync(id).Result;
-
-            if (category == null)
+            try
             {
-                return ResponseGeneric<Category>.Error("Kategori bulunamadı.");
+                var category = _categoryRepository.GetByIdAsync(id).Result;
 
+                if (category == null)
+                {
+                    return ResponseGeneric<Category>.Error("Kategori bulunamadı.");
+
+                }
+                return ResponseGeneric<Category>.Success(category, "Kategori başarıyla bulundu.");
             }
-            return ResponseGeneric<Category>.Success(category, "Kategori başarıyla bulundu.");
+            catch
+            {
+                return ResponseGeneric<Category>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<IEnumerable<Category>> GetByName(string name)
         {
-            var categoryList = _categoryRepository.GetAll().Where(x => x.Name == name).ToList();
-
-            if (categoryList == null || categoryList.Count == 0)
+            try
             {
-                return ResponseGeneric<IEnumerable<Category>>.Error("Kategori bulunamadı.");
+                var categoryList = _categoryRepository.GetAll().Where(x => x.Name == name).ToList();
 
+                if (categoryList == null || categoryList.Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<Category>>.Error("Kategori bulunamadı.");
+
+                }
+                return ResponseGeneric<IEnumerable<Category>>.Success(categoryList, "Kategori başarıyla bulundu.");
             }
-            return ResponseGeneric<IEnumerable<Category>>.Success(categoryList, "Kategori başarıyla bulundu.");
+            catch 
+            {
+                return ResponseGeneric<IEnumerable<Category>>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<IEnumerable<Category>> ListAll()
         {
-            var allCategories = _categoryRepository.GetAll().ToList();
-
-            if (allCategories == null || allCategories.Count == 0)
+            try
             {
-                return ResponseGeneric<IEnumerable<Category>>.Error("Kategoriler bulunamadı.");
+                var allCategories = _categoryRepository.GetAll().ToList();
+
+                if (allCategories == null || allCategories.Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<Category>>.Error("Kategoriler bulunamadı.");
+                }
+                return ResponseGeneric<IEnumerable<Category>>.Success(allCategories, "Kategoriler başarıyla listelendi.");
             }
-            return ResponseGeneric<IEnumerable<Category>>.Success(allCategories, "Kategoriler başarıyla listelendi.");
+            catch
+            {
+                return ResponseGeneric<IEnumerable<Category>>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public Task<IResponse<Category>> Update(Category category)
         {
-            if (category == null)
+            try
             {
-                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Kategori bulunamadı"));
+                if (category == null)
+                {
+                    return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Kategori bulunamadı."));
 
+                }
+                _categoryRepository.Update(category);
+                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Success(category, "Kategori başarıyla güncellendi."));
             }
-            _categoryRepository.Update(category);
-            return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Success(category, "Kategori başarıyla güncellendi"));
+            catch
+            {
+                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Kategori bulunamadı."));
+            }
         }
     }
 }

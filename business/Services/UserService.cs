@@ -22,70 +22,112 @@ namespace Business.Services
 
         public Task<IResponse<User>> Create(User user)
         {
-            if (user == null)
+            try
             {
-                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Kullanıcı bilgileri boş olamaz."));
+                if (user == null)
+                {
+                    return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Kullanıcı bilgileri boş olamaz."));
+                }
+                _userRepository.Create(user);
+                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla oluşturuldu."));
             }
-            _userRepository.Create(user);
-            return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla oluşturuldu."));
+            catch
+            {
+                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu."));
+            }
         }
 
         public IResponse<User> Delete(int id)
         {
-            var user = _userRepository.GetByIdAsync(id).Result;
-
-            if (user == null)
+            try
             {
-                return ResponseGeneric<User>.Error("Kullanıcı bulunamadı.");
+                var user = _userRepository.GetByIdAsync(id).Result;
 
+                if (user == null)
+                {
+                    return ResponseGeneric<User>.Error("Kullanıcı bulunamadı.");
+
+                }
+                _userRepository.Delete(user);
+                return ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla silindi.");
             }
-            _userRepository.Delete(user);
-            return ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla silindi.");
+            catch
+            {
+                return ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<User> GetById(int id)
         {
-            var user = _userRepository.GetByIdAsync(id).Result;
-
-            if (user == null)
+            try
             {
-                return ResponseGeneric<User>.Error("Kullanıcı bulunamadı.");
+                var user = _userRepository.GetByIdAsync(id).Result;
 
+                if (user == null)
+                {
+                    return ResponseGeneric<User>.Error("Kullanıcı bulunamadı.");
+
+                }
+                return ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla bulundu.");
             }
-            return ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla bulundu.");
+            catch
+            {
+                return ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<IEnumerable<User>> GetByName(string name)
         {
-            var userList = _userRepository.GetAll().Where(x => x.Name == name).ToList();
-
-            if (userList == null || userList.Count == 0)
+            try
             {
-                return ResponseGeneric<IEnumerable<User>>.Error("Kullanıcı bulunamadı.");
+                var userList = _userRepository.GetAll().Where(x => x.Name == name).ToList();
+
+                if (userList == null || userList.Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<User>>.Error("Kullanıcı bulunamadı.");
+                }
+                return ResponseGeneric<IEnumerable<User>>.Success(userList, "Kullanıcı başarıyla bulundu.");
             }
-            return ResponseGeneric<IEnumerable<User>>.Success(userList, "Kullanıcı başarıyla bulundu.");
+            catch
+            {
+                return ResponseGeneric<IEnumerable<User>>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public IResponse<IEnumerable<User>> ListAll()
         {
-            var allUser = _userRepository.GetAll().ToList();
-
-            if (allUser == null || allUser.Count == 0)
+            try
             {
-                return ResponseGeneric<IEnumerable<User>>.Error("Kullanıcılar bulunamadı.");
+                var allUser = _userRepository.GetAll().ToList();
+
+                if (allUser == null || allUser.Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<User>>.Error("Kullanıcılar bulunamadı.");
+                }
+                return ResponseGeneric<IEnumerable<User>>.Success(allUser, "Kullanıcıllar başarıyla listelendi.");
             }
-            return ResponseGeneric<IEnumerable<User>>.Success(allUser, "Kullanıcıllar başarıyla listelendi.");
+            catch
+            {
+                return ResponseGeneric<IEnumerable<User>>.Error("Beklenmeyen bir hata oluştu.");
+            }
         }
 
         public Task<IResponse<User>> Update(User user)
         {
-            if (user == null)
+            try
             {
-                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Kullanıcı bulunamadı"));
+                if (user == null)
+                {
+                    return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Kullanıcı bulunamadı."));
 
+                }
+                _userRepository.Update(user);
+                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla güncellendi."));
             }
-            _userRepository.Update(user);
-            return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla güncellendi"));
+            catch 
+            {
+                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu."));
+            }
         }
     }
 }

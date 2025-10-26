@@ -121,11 +121,11 @@ namespace Business.Services
             {
                 if (author == null)
                 {
-                    return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bulunamadı"));
+                    return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bulunamadı."));
 
                 }
                 _authorRepository.Update(author);
-                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(author, "Yazar başarıyla güncellendi"));
+                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(author, "Yazar başarıyla güncellendi."));
             }
             catch
             {
