@@ -15,8 +15,7 @@ namespace CoreApiArch.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet]
-
+        [HttpGet("ListAll")]
         public IActionResult GetAll()
         {
             var categories = _categoryService.ListAll();

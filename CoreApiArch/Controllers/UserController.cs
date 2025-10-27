@@ -15,8 +15,7 @@ namespace CoreApiArch.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
-
+        [HttpGet("ListAll")]
         public IActionResult GetAll()
         {
             var users = _userService.ListAll();

@@ -15,8 +15,7 @@ namespace CoreApiArch.Controllers
             _bookService = bookService;
         }
 
-        [HttpGet]
-
+        [HttpGet("ListAll")]
         public IActionResult GetAll()
         {
             var books = _bookService.ListAll();

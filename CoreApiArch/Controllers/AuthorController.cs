@@ -16,7 +16,7 @@ namespace CoreApiArch.Controllers
             _authorService = authorService;
         }
 
-        [HttpGet]
+        [HttpGet("ListAll")]
 
         public IActionResult GetAll()
         {
