@@ -1,6 +1,7 @@
 ﻿using Business.Interfaces;
 using Business.Response;
 using Core.DTOs;
+using AutoMapper;
 using Core.Entities;
 using DataAccess.Repository;
 using System;
@@ -17,29 +18,25 @@ namespace Business.Services
 
         // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<Author> _authorRepository;
+        private readonly IMapper _mapper;
 
-        public AuthorService(IGenericRepository<Author> authorRepository)
+        public AuthorService(IGenericRepository<Author> authorRepository, IMapper mapper)
         {
             _authorRepository = authorRepository;
+            _mapper = mapper;
         }
 
-        public Task<IResponse<Author>> Create(AuthorDto author)
+        public Task<IResponse<Author>> Create(AuthorDto authorDto)
         {
             try
             {
-                if (author == null)
+                if (authorDto == null)
                 {
                     return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bilgileri boş olamaz."));
                 }
 
-                var newAuthor = new Author
-                {
-                    Name = author.Name,
-                    Surname = author.Surname,
-                    PlaceOfBirth = author.PlaceOfBirth,
-                    YearOfBirth = author.YearOfBirth,
-                    RecordDate = DateTime.Now
-                };
+                var newAuthor = _mapper.Map<Author>(authorDto); // AutoMapper ile DTO'yu Entity'e dönüştürüyoruz.
+                newAuthor.RecordDate = DateTime.Now;
 
                 _authorRepository.Create(newAuthor);
                 return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(newAuthor, "Yazar başarıyla oluşturuldu."));
