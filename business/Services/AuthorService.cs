@@ -35,7 +35,7 @@ namespace Business.Services
                     return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bilgileri boş olamaz."));
                 }
 
-                var newAuthor = _mapper.Map<Author>(authorDto); // AutoMapper ile DTO'yu Entity'e dönüştürüyoruz.
+                var newAuthor = _mapper.Map<Author>(authorDto);
                 newAuthor.RecordDate = DateTime.Now;
 
                 _authorRepository.Create(newAuthor);
