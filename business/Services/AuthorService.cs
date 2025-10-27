@@ -1,5 +1,6 @@
 ﻿using Business.Interfaces;
 using Business.Response;
+using Core.DTOs;
 using Core.Entities;
 using DataAccess.Repository;
 using System;
@@ -22,7 +23,7 @@ namespace Business.Services
             _authorRepository = authorRepository;
         }
 
-        public Task<IResponse<Author>> Create(Author author)
+        public Task<IResponse<Author>> Create(AuthorDto author)
         {
             try
             {
@@ -30,8 +31,18 @@ namespace Business.Services
                 {
                     return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bilgileri boş olamaz."));
                 }
-                _authorRepository.Create(author);
-                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(author, "Yazar başarıyla oluşturuldu."));
+
+                var newAuthor = new Author
+                {
+                    Name = author.Name,
+                    Surname = author.Surname,
+                    PlaceOfBirth = author.PlaceOfBirth,
+                    YearOfBirth = author.YearOfBirth,
+                    RecordDate = DateTime.Now
+                };
+
+                _authorRepository.Create(newAuthor);
+                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(newAuthor, "Yazar başarıyla oluşturuldu."));
             }
             catch
             {

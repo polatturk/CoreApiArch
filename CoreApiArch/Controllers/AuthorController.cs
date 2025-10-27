@@ -1,4 +1,5 @@
 ﻿using Business.Interfaces;
+using Core.DTOs;
 using Core.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -60,7 +61,7 @@ namespace CoreApiArch.Controllers
         }
 
         [HttpPost("Create")]
-        public IActionResult Create([FromBody] Author author)
+        public IActionResult Create([FromBody] AuthorDto author)
         {
             if (author == null)
             {

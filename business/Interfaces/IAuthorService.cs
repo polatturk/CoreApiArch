@@ -1,5 +1,6 @@
 ﻿using Business.Response;
 using Core.Entities;
+using Core.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Business.Interfaces
     {
         IResponse<IEnumerable<Author>> ListAll();
         IResponse<Author> GetById(int id);
-        Task<IResponse<Author>> Create(Author author);
+        Task<IResponse<Author>> Create(AuthorDto author);
         Task<IResponse<Author>> Update(Author author);
         IResponse<Author> Delete(int id);
         IResponse<IEnumerable<Author>> GetByName(string name);
