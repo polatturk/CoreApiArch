@@ -14,6 +14,7 @@ namespace Business.MapProfile
         public MapProfile()
         {
             CreateMap<Author, AuthorDto>().ReverseMap();
+            CreateMap<Author, AuthorListDto>().ReverseMap();
         }
     }
 }

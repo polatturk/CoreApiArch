@@ -11,12 +11,12 @@ namespace Business.Interfaces
 {
     public interface IAuthorService
     {
-        IResponse<IEnumerable<Author>> ListAll();
-        IResponse<Author> GetById(int id);
+        IResponse<IEnumerable<AuthorListDto>> ListAll();
+        IResponse<AuthorListDto> GetById(int id);
         Task<IResponse<Author>> Create(AuthorDto author);
         Task<IResponse<Author>> Update(Author author);
         IResponse<Author> Delete(int id);
-        IResponse<IEnumerable<Author>> GetByName(string name);
+        IResponse<IEnumerable<AuthorListDto>> GetByName(string name);
     }
 }
    

@@ -16,16 +16,19 @@ namespace DataAccess.Repository
         public void Create(TEntity entity)
         {
             _dbset.Add(entity);
+            _context.SaveChanges();
         }
 
         public void Delete(TEntity entity)
         {
             _dbset.Remove(entity);
+            _context.SaveChanges();
         }
 
         public void DeleteRange(List<TEntity> entities)
         {
             _dbset.RemoveRange(entities);
+            _context.SaveChanges();
         }
 
         public IQueryable<TEntity> GetAll()
@@ -41,6 +44,7 @@ namespace DataAccess.Repository
         public void Update(TEntity entity)
         {
             _dbset.Update(entity);
+            _context.SaveChanges();
         }
     }
 }
