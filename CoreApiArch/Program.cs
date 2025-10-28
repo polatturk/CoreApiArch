@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
 using DataAccess.Repository;
-using Core.Entities;
 using Business.Interfaces;
 using Business.Services;
+using Business.MapProfile;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CoreApiArch
 {
@@ -22,12 +23,15 @@ namespace CoreApiArch
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAutoMapper(typeof(MapProfile));
+
 
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             builder.Services.AddScoped<IAuthorService,AuthorService>();
             builder.Services.AddScoped<IBookService,BookService>();
             builder.Services.AddScoped<IUserService,UserService>();
             builder.Services.AddScoped<ICategoryService,CategoryService>();
+
 
             var app = builder.Build();
 
