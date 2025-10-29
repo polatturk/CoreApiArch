@@ -20,28 +20,26 @@ namespace CoreApiArch.Controllers
         }
 
         [HttpGet("ListAll")]
-
         public IActionResult GetAll()
         {
             var authors = _authorService.ListAll();
 
-            if (authors == null)
+            if (!authors.IsSuccess)
             {
-                return BadRequest("Yazar bulunamadı.");
+                return NotFound("Yazar bulunamadı.");
             }
 
             return Ok(authors);
         }
 
         [HttpGet("GetByName")]
-
         public IActionResult GetByName(string name)
         {
             var result = _authorService.GetByName(name);
 
-            if (result == null)
+            if (!result.IsSuccess)
             {
-                return BadRequest("Yazar bulunamadı.");
+                return NotFound("Yazar bulunamadı.");
             }
 
             return Ok(result);
@@ -52,7 +50,7 @@ namespace CoreApiArch.Controllers
         {
 
             var result = _authorService.Delete(id);
-            if(result == null)
+            if(!result.IsSuccess)
             {
                 return BadRequest("Silme işlemi başarısız oldu.");
             }
@@ -71,7 +69,7 @@ namespace CoreApiArch.Controllers
 
             var result = _authorService.Create(author);
 
-            if (result == null)
+            if (!result.Result.IsSuccess)
             {
                 return BadRequest("Yazar oluşturulamadı.");
             }
