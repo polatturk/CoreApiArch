@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccess.DTOs;
+using AutoMapper;
+using Core.DTOs;
 
 namespace Business.Services
 {
@@ -14,10 +17,12 @@ namespace Business.Services
     {
         // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<Book> _bookRepository;
+        private readonly IMapper _mapper;
 
-        public BookService(IGenericRepository<Book> bookRepository)
+        public BookService(IGenericRepository<Book> bookRepository, IMapper mapper)
         {
             _bookRepository = bookRepository;
+            _mapper = mapper;
         }
 
         public Task<IResponse<Book>> Create(Book book)
@@ -28,8 +33,12 @@ namespace Business.Services
                 {
                     return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Kitap bilgileri boş olamaz."));
                 }
-                _bookRepository.Create(book);
-                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Success(book, "Kitap başarıyla oluşturuldu."));
+
+                var newBook = _mapper.Map<Book>(book);
+                newBook.RecordDate = DateTime.Now;
+
+                _bookRepository.Create(newBook);
+                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Success(newBook, "Kitap başarıyla oluşturuldu."));
             }
             catch
             {
@@ -49,7 +58,7 @@ namespace Business.Services
 
                 }
                 _bookRepository.Delete(book);
-                return ResponseGeneric<Book>.Success(book, "Kitap başarıyla silindi.");
+                return ResponseGeneric<Book>.Success(null, "Kitap başarıyla silindi.");
             }
             catch 
             {
@@ -62,6 +71,8 @@ namespace Business.Services
             try
             {
                 var book = _bookRepository.GetByIdAsync(id).Result;
+
+                var bookDto = _mapper.Map<BookListDto>(book);
 
                 if (book == null)
                 {
