@@ -1,10 +1,11 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using DataAccess;
 using DataAccess.Repository;
 using Business.Interfaces;
 using Business.Services;
 using Business.MapProfile;
 using Microsoft.Extensions.DependencyInjection;
+using Core.Entities;
 
 namespace CoreApiArch
 {
@@ -23,14 +24,20 @@ namespace CoreApiArch
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
             builder.Services.AddAutoMapper(typeof(MapProfile));
 
-
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            builder.Services.AddScoped<IAuthorService,AuthorService>();
-            builder.Services.AddScoped<IBookService,BookService>();
-            builder.Services.AddScoped<IUserService,UserService>();
-            builder.Services.AddScoped<ICategoryService,CategoryService>();
+            //Servis Implamantasyonları
+            //AddTransient: Her istekte yeni bir instance oluşturur.
+            //AddScoped: Her istekte bir instance oluşturur ve isteğin sonunda yok eder.
+            builder.Services.AddScoped<IGenericRepository<Author>, GenericRepository<Author>>();
+            builder.Services.AddScoped<IGenericRepository<Book>, GenericRepository<Book>>();
+            builder.Services.AddScoped<IGenericRepository<Category>, GenericRepository<Category>>();
+            builder.Services.AddScoped<IGenericRepository<User>, GenericRepository<User>>();
+            builder.Services.AddScoped<IAuthorService, AuthorService>();
+            builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
 
             var app = builder.Build();

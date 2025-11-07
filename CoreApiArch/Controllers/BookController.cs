@@ -11,7 +11,6 @@ namespace CoreApiArch.Controllers
     public class BookController : ControllerBase
     {
         public readonly IBookService _bookService;
-
         public BookController(IBookService bookService)
         {
             _bookService = bookService;
