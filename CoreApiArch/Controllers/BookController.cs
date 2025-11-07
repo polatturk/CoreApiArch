@@ -56,23 +56,23 @@ namespace CoreApiArch.Controllers
             return Ok(result);
         }
 
-        //[HttpPost("Create")]
-        //public IActionResult Create([FromBody] BookDto book)
-        //{
-        //    if (book == null)
-        //    {
-        //        return BadRequest("Kitap bilgileri boş olamaz.");
+        [HttpPost("Create")]
+        public IActionResult Create([FromBody] BookDto book)
+        {
+            if (book == null)
+            {
+                return BadRequest("Kitap bilgileri boş olamaz.");
 
-        //    }
+            }
 
-        //    var result = _bookService.Create(book);
+            var result = _bookService.Create(book);
 
-        //    if (!result.Result.IsSuccess)
-        //    {
-        //        return BadRequest("Kitap oluşturulamadı.");
-        //    }
-        //    return Ok(result);
+            if (!result.Result.IsSuccess)
+            {
+                return BadRequest("Kitap oluşturulamadı.");
+            }
+            return Ok(result);
 
-        //}
+        }
     }
 }

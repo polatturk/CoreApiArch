@@ -25,16 +25,16 @@ namespace Business.Services
             _mapper = mapper;
         }
 
-        public Task<IResponse<Book>> Create(Book book)
+        public Task<IResponse<Book>> Create(BookDto bookDto)
         {
             try
             {
-                if (book == null)
+                if (bookDto == null)
                 {
                     return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Kitap bilgileri boş olamaz."));
                 }
 
-                var newBook = _mapper.Map<Book>(book);
+                var newBook = _mapper.Map<Book>(bookDto);
                 newBook.RecordDate = DateTime.Now;
 
                 _bookRepository.Create(newBook);
@@ -58,7 +58,7 @@ namespace Business.Services
 
                 }
                 _bookRepository.Delete(book);
-                return ResponseGeneric<Book>.Success(null, "Kitap başarıyla silindi.");
+                return ResponseGeneric<Book>.Success(book, "Kitap başarıyla silindi.");
             }
             catch 
             {
@@ -66,61 +66,62 @@ namespace Business.Services
             }
         }
 
-        public IResponse<Book> GetById(int id)
+        public IResponse<BookListDto> GetById(int id)
         {
             try
             {
                 var book = _bookRepository.GetByIdAsync(id).Result;
+                var bookListDtos = _mapper.Map<BookListDto>(book);
 
-                var bookDto = _mapper.Map<BookListDto>(book);
-
-                if (book == null)
+                if (bookListDtos == null)
                 {
-                    return ResponseGeneric<Book>.Error("Kitap bulunamadı.");
+                    return ResponseGeneric<BookListDto>.Error("Kitap bulunamadı.");
 
                 }
-                return ResponseGeneric<Book>.Success(book, "Kitap başarıyla bulundu.");
+                return ResponseGeneric<BookListDto>.Success(bookListDtos, "Kitap başarıyla bulundu.");
             }
             catch
             {
-                return ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu.");
+                return ResponseGeneric<BookListDto>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
 
-        public IResponse<IEnumerable<Book>> GetByName(string title)
+        public IResponse<IEnumerable<BookListDto>> GetByName(string title)
         {
             try
             {
                 var bookList = _bookRepository.GetAll().Where(x => x.Title == title).ToList();
+                var bookListDtos = _mapper.Map<IEnumerable<BookListDto>>(bookList);
 
-                if (bookList == null || bookList.Count == 0)
+                if (bookListDtos == null || bookListDtos.ToList().Count == 0)
                 {
-                    return ResponseGeneric<IEnumerable<Book>>.Error("Kitap bulunamadı.");
+                    return ResponseGeneric<IEnumerable<BookListDto>>.Error("Kitap bulunamadı.");
 
                 }
-                return ResponseGeneric<IEnumerable<Book>>.Success(bookList, "Kitap başarıyla bulundu.");
+                return ResponseGeneric<IEnumerable<BookListDto>>.Success(bookListDtos, "Kitap başarıyla bulundu.");
             }
             catch
             {
-                return ResponseGeneric<IEnumerable<Book>>.Error("Beklenmeyen bir hata oluştu.");
+                return ResponseGeneric<IEnumerable<BookListDto>>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
 
-        public IResponse<IEnumerable<Book>> ListAll()
+        public IResponse<IEnumerable<BookListDto>> ListAll()
         {
             try
             {
                 var allBooks = _bookRepository.GetAll().ToList();
+                var bookListDtos = _mapper.Map<IEnumerable<BookListDto>>(allBooks);
 
-                if (allBooks == null || allBooks.Count == 0)
+                if (bookListDtos == null || bookListDtos.ToList().Count == 0)
                 {
-                    return ResponseGeneric<IEnumerable<Book>>.Error("Kitaplar bulunamadı.");
+                    return ResponseGeneric<IEnumerable<BookListDto>>.Error("Kitaplar bulunamadı.");
                 }
-                return ResponseGeneric<IEnumerable<Book>>.Success(allBooks, "Kitaplar başarıyla listelendi.");
+                return ResponseGeneric<IEnumerable<BookListDto>>.Success(bookListDtos, "Kitaplar başarıyla listelendi.");
             }
             catch
             {
-                return ResponseGeneric<IEnumerable<Book>>.Error("Beklenmeyen bir hata oluştu.");
+                return ResponseGeneric<IEnumerable<BookListDto>>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
 

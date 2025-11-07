@@ -1,5 +1,6 @@
 ﻿using Business.Response;
 using Core.Entities;
+using DataAccess.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,11 @@ namespace Business.Interfaces
 {
     public interface IBookService
     {
-        IResponse<IEnumerable<Book>> ListAll();
-        IResponse<Book> GetById(int id);
-        Task<IResponse<Book>> Create(Book book);
+        IResponse<IEnumerable<BookListDto>> ListAll();
+        IResponse<BookListDto> GetById(int id);
+        Task<IResponse<Book>> Create(BookDto bookDto);
         Task<IResponse<Book>> Update(Book book);
         IResponse<Book> Delete(int id);
-        IResponse<IEnumerable<Book>> GetByName(string name);
+        IResponse<IEnumerable<BookListDto>> GetByName(string name);
     }
 }
