@@ -2,6 +2,8 @@
 using Business.Response;
 using Core.Entities;
 using DataAccess.Repository;
+using DataAccess.DTOs;
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,22 +17,29 @@ namespace Business.Services
 
         // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<Category> _categoryRepository;
+        private readonly IMapper _mapper;
 
-        public CategoryService(IGenericRepository<Category> categoryRepository)
+
+        public CategoryService(IGenericRepository<Category> categoryRepository, IMapper mapper)
         {
             _categoryRepository = categoryRepository;
+            _mapper = mapper;
         }
 
-        public Task<IResponse<Category>> Create(Category category)
+        public Task<IResponse<Category>> Create(CategoryDto categoryDto)
         {
             try
             {
-                if (category == null)
+                if (categoryDto == null)
                 {
                     return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Kategori bilgileri boş olamaz."));
                 }
-                _categoryRepository.Create(category);
-                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Success(category, "Kategori başarıyla oluşturuldu."));
+
+                var newCategory = _mapper.Map<Category>(categoryDto);
+                newCategory.RecordDate = DateTime.Now;
+
+                _categoryRepository.Create(newCategory);
+                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Success(newCategory, "Kategori başarıyla oluşturuldu."));
             }
             catch
             {
@@ -58,59 +67,62 @@ namespace Business.Services
             }
         }
 
-        public IResponse<Category> GetById(int id)
+        public IResponse<CategoryListDto> GetById(int id)
         {
             try
             {
                 var category = _categoryRepository.GetByIdAsync(id).Result;
+                var categoryListDtos = _mapper.Map < CategoryListDto>(category);
 
                 if (category == null)
                 {
-                    return ResponseGeneric<Category>.Error("Kategori bulunamadı.");
+                    return ResponseGeneric<CategoryListDto>.Error("Kategori bulunamadı.");
 
                 }
-                return ResponseGeneric<Category>.Success(category, "Kategori başarıyla bulundu.");
+                return ResponseGeneric<CategoryListDto>.Success(categoryListDtos, "Kategori başarıyla bulundu.");
             }
             catch
             {
-                return ResponseGeneric<Category>.Error("Beklenmeyen bir hata oluştu.");
+                return ResponseGeneric<CategoryListDto>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
 
-        public IResponse<IEnumerable<Category>> GetByName(string name)
+        public IResponse<IEnumerable<CategoryListDto>> GetByName(string name)
         {
             try
             {
                 var categoryList = _categoryRepository.GetAll().Where(x => x.Name == name).ToList();
+                var categoryListDtos = _mapper.Map<IEnumerable<CategoryListDto>>(categoryList);
 
                 if (categoryList == null || categoryList.Count == 0)
                 {
-                    return ResponseGeneric<IEnumerable<Category>>.Error("Kategori bulunamadı.");
+                    return ResponseGeneric<IEnumerable<CategoryListDto>>.Error("Kategori bulunamadı.");
 
                 }
-                return ResponseGeneric<IEnumerable<Category>>.Success(categoryList, "Kategori başarıyla bulundu.");
+                return ResponseGeneric<IEnumerable<CategoryListDto>>.Success(categoryListDtos, "Kategori başarıyla bulundu.");
             }
             catch 
             {
-                return ResponseGeneric<IEnumerable<Category>>.Error("Beklenmeyen bir hata oluştu.");
+                return ResponseGeneric<IEnumerable<CategoryListDto>>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
 
-        public IResponse<IEnumerable<Category>> ListAll()
+        public IResponse<IEnumerable<CategoryListDto>> ListAll()
         {
             try
             {
                 var allCategories = _categoryRepository.GetAll().ToList();
+                var CategoryListDtos = _mapper.Map<IEnumerable<CategoryListDto>>(allCategories);
 
                 if (allCategories == null || allCategories.Count == 0)
                 {
-                    return ResponseGeneric<IEnumerable<Category>>.Error("Kategoriler bulunamadı.");
+                    return ResponseGeneric<IEnumerable<CategoryListDto>>.Error("Kategoriler bulunamadı.");
                 }
-                return ResponseGeneric<IEnumerable<Category>>.Success(allCategories, "Kategoriler başarıyla listelendi.");
+                return ResponseGeneric<IEnumerable<CategoryListDto>>.Success(CategoryListDtos, "Kategoriler başarıyla listelendi.");
             }
             catch
             {
-                return ResponseGeneric<IEnumerable<Category>>.Error("Beklenmeyen bir hata oluştu.");
+                return ResponseGeneric<IEnumerable<CategoryListDto>>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
 

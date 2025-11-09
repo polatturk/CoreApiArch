@@ -19,6 +19,9 @@ namespace Business.MapProfile
 
             CreateMap<Book, BookDto>().ReverseMap();
             CreateMap<Book, BookListDto>().ReverseMap();
+
+            CreateMap<Category, CategoryDto>().ReverseMap();
+            CreateMap<Category, CategoryListDto>().ReverseMap();
         }
     }
 }
