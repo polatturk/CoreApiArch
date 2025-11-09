@@ -1,6 +1,8 @@
-﻿using Business.Interfaces;
+﻿using AutoMapper;
+using Business.Interfaces;
 using Business.Response;
 using Core.Entities;
+using DataAccess.DTOs;
 using DataAccess.Repository;
 using System;
 using System.Collections.Generic;
@@ -14,22 +16,28 @@ namespace Business.Services
     {
         // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<User> _userRepository;
+        private readonly IMapper _mapper;
 
-        public UserService(IGenericRepository<User> userRepository)
+        public UserService(IGenericRepository<User> userRepository, Mapper mapper)
         {
             _userRepository = userRepository;
+            _mapper = mapper;
         }
 
-        public Task<IResponse<User>> Create(User user)
+        public Task<IResponse<User>> Create(UserDto userDto)
         {
             try
             {
-                if (user == null)
+                if (userDto == null)
                 {
                     return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Kullanıcı bilgileri boş olamaz."));
                 }
-                _userRepository.Create(user);
-                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla oluşturuldu."));
+
+                var newUser = _mapper.Map<User>(userDto);
+                newUser.RecordDate = DateTime.Now;
+
+                _userRepository.Create(newUser);
+                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(newUser, "Kullanıcı başarıyla oluşturuldu."));
             }
             catch
             {
