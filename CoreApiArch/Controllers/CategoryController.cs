@@ -61,7 +61,7 @@ namespace CoreApiArch.Controllers
         {
             if (categoryDto == null)
             {
-                return BadRequest("Kategori tap bilgileri boş olamaz.");
+                return BadRequest("Kategori bilgileri boş olamaz.");
             }
 
             var result = _categoryService.Create(categoryDto);
