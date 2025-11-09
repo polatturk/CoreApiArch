@@ -112,13 +112,13 @@ namespace Business.Services
             try
             {
                 var allCategories = _categoryRepository.GetAll().ToList();
-                var CategoryListDtos = _mapper.Map<IEnumerable<CategoryListDto>>(allCategories);
+                var categoryListDtos = _mapper.Map<IEnumerable<CategoryListDto>>(allCategories);
 
                 if (allCategories == null || allCategories.Count == 0)
                 {
                     return ResponseGeneric<IEnumerable<CategoryListDto>>.Error("Kategoriler bulunamadı.");
                 }
-                return ResponseGeneric<IEnumerable<CategoryListDto>>.Success(CategoryListDtos, "Kategoriler başarıyla listelendi.");
+                return ResponseGeneric<IEnumerable<CategoryListDto>>.Success(categoryListDtos, "Kategoriler başarıyla listelendi.");
             }
             catch
             {

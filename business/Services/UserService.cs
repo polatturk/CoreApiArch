@@ -65,58 +65,61 @@ namespace Business.Services
             }
         }
 
-        public IResponse<User> GetById(int id)
+        public IResponse<UserListDto> GetById(int id)
         {
             try
             {
                 var user = _userRepository.GetByIdAsync(id).Result;
+                var userListDtos = _mapper.Map<UserListDto>(user);
 
                 if (user == null)
                 {
-                    return ResponseGeneric<User>.Error("Kullanıcı bulunamadı.");
+                    return ResponseGeneric<UserListDto>.Error("Kullanıcı bulunamadı.");
 
                 }
-                return ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla bulundu.");
+                return ResponseGeneric<UserListDto>.Success(userListDtos, "Kullanıcı başarıyla bulundu.");
             }
             catch
             {
-                return ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu.");
+                return ResponseGeneric<UserListDto>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
 
-        public IResponse<IEnumerable<User>> GetByName(string name)
+        public IResponse<IEnumerable<UserListDto>> GetByName(string name)
         {
             try
             {
                 var userList = _userRepository.GetAll().Where(x => x.Name == name).ToList();
+                var userListDtos = _mapper.Map<IEnumerable<UserListDto>>(userList);
 
                 if (userList == null || userList.Count == 0)
                 {
-                    return ResponseGeneric<IEnumerable<User>>.Error("Kullanıcı bulunamadı.");
+                    return ResponseGeneric<IEnumerable<UserListDto>>.Error("Kullanıcı bulunamadı.");
                 }
-                return ResponseGeneric<IEnumerable<User>>.Success(userList, "Kullanıcı başarıyla bulundu.");
+                return ResponseGeneric<IEnumerable<UserListDto>>.Success(userListDtos, "Kullanıcı başarıyla bulundu.");
             }
             catch
             {
-                return ResponseGeneric<IEnumerable<User>>.Error("Beklenmeyen bir hata oluştu.");
+                return ResponseGeneric<IEnumerable<UserListDto>>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
 
-        public IResponse<IEnumerable<User>> ListAll()
+        public IResponse<IEnumerable<UserListDto>> ListAll()
         {
             try
             {
                 var allUser = _userRepository.GetAll().ToList();
+                var userListDtos = _mapper.Map<IEnumerable<UserListDto>>(allUser);
 
                 if (allUser == null || allUser.Count == 0)
                 {
-                    return ResponseGeneric<IEnumerable<User>>.Error("Kullanıcılar bulunamadı.");
+                    return ResponseGeneric<IEnumerable<UserListDto>>.Error("Kullanıcılar bulunamadı.");
                 }
-                return ResponseGeneric<IEnumerable<User>>.Success(allUser, "Kullanıcıllar başarıyla listelendi.");
+                return ResponseGeneric<IEnumerable<UserListDto>>.Success(userListDtos, "Kullanıcıllar başarıyla listelendi.");
             }
             catch
             {
-                return ResponseGeneric<IEnumerable<User>>.Error("Beklenmeyen bir hata oluştu.");
+                return ResponseGeneric<IEnumerable<UserListDto>>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
 
