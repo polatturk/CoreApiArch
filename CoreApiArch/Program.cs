@@ -6,6 +6,10 @@ using Business.Services;
 using Business.MapProfile;
 using Microsoft.Extensions.DependencyInjection;
 using Core.Entities;
+using Serilog;
+
+//Log yapılandırması
+Log.Logger = new LoggerConfiguration().WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day).CreateLogger();
 
 namespace CoreApiArch
 {
@@ -14,6 +18,9 @@ namespace CoreApiArch
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Host.UseSerilog(); // Serilog'u kullanmak için ekleyin
+
 
             // Add services to the container.
             builder.Services.AddControllers();
