@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using DataAccess.DTOs;
 using AutoMapper;
 using Core.DTOs;
+using Microsoft.Extensions.Logging;
 
 namespace Business.Services
 {
@@ -18,11 +19,13 @@ namespace Business.Services
         // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<Book> _bookRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<BookService> _logger;
 
-        public BookService(IGenericRepository<Book> bookRepository, IMapper mapper)
+        public BookService(IGenericRepository<Book> bookRepository, IMapper mapper, ILogger<BookService> logger)
         {
             _bookRepository = bookRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public Task<IResponse<Book>> Create(BookDto bookDto)
