@@ -41,10 +41,13 @@ namespace Business.Services
                 newBook.RecordDate = DateTime.Now;
 
                 _bookRepository.Create(newBook);
+                _logger.LogInformation("Kitap başarıyla oluşturuldu.", newBook.Title);
                 return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Success(newBook, "Kitap başarıyla oluşturuldu."));
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Kitap oluşturulurken bir hata oluştu.", bookDto.Title);
+
                 return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
