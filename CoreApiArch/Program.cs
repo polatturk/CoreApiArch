@@ -21,7 +21,6 @@ namespace CoreApiArch
 
             builder.Host.UseSerilog(); // Serilog'u kullanmak için ekleyin
 
-
             // Add services to the container.
             builder.Services.AddControllers();
 
@@ -46,6 +45,8 @@ namespace CoreApiArch
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<IUserService, UserService>();
 
+            // ÖNERİLEN KOD (Dinamik ve Tek Satır)
+            //builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             var app = builder.Build();
 
@@ -59,7 +60,6 @@ namespace CoreApiArch
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

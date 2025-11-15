@@ -47,7 +47,6 @@ namespace Business.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Kitap oluşturulurken bir hata oluştu.", bookDto.Title);
-
                 return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
@@ -128,6 +127,27 @@ namespace Business.Services
             catch
             {
                 return ResponseGeneric<IEnumerable<BookListDto>>.Error("Beklenmeyen bir hata oluştu.");
+            }
+        }
+
+        public IResponse<IEnumerable<BookListDto>> GetCategoryByCategoryId(int categoryId)
+        {
+            try
+            {
+                var booksInCategory = _bookRepository.GetAll().Where(x => x.CategoryId == categoryId).ToList();
+
+                var bookDtos = _mapper.Map<IEnumerable<BookListDto>>(booksInCategory);
+
+                if (bookDtos == null || bookDtos.ToList().Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<BookListDto>>.Error("Kitap bulunamadı.");
+                }
+                return ResponseGeneric<IEnumerable<BookListDto>>.Success(bookDtos, "Kitaplar başarıyla listelendi.");
+            }
+            catch
+            {
+
+                return ResponseGeneric<IEnumerable<BookListDto>>.Error("Bir hata oluştu.");
             }
         }
 
