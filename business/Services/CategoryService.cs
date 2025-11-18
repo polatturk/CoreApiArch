@@ -49,6 +49,7 @@ namespace Business.Services
             {
                 _logger.LogError(ex, "Kategori oluşturulurken bir hata oluştu.", categoryDto.Name);
                 return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Beklenmeyen bir hata oluştu."));
+
             }
         }
 
