@@ -65,12 +65,10 @@ namespace Business.Services
 
                 }
                 _categoryRepository.Delete(category);
-                _logger.LogInformation("Kategori başarıyla silindi.", category.Name);
                 return ResponseGeneric<Category>.Success(category, "Kategori başarıyla silindi.");
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "Kategori silinirken bir hata oluştu.", null);
                 return ResponseGeneric<Category>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
