@@ -64,6 +64,7 @@ namespace Business.Services
 
                 }
                 _categoryRepository.Delete(category);
+                _logger.LogInformation("Kategori başarıyla silindi.", category.Name);
                 return ResponseGeneric<Category>.Success(category, "Kategori başarıyla silindi.");
             }
             catch
