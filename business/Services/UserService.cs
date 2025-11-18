@@ -4,6 +4,7 @@ using Business.Response;
 using Core.Entities;
 using DataAccess.DTOs;
 using DataAccess.Repository;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,13 @@ namespace Business.Services
         // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<User> _userRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<UserService> _logger;
 
-        public UserService(IGenericRepository<User> userRepository, Mapper mapper)
+        public UserService(IGenericRepository<User> userRepository, Mapper mapper, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public Task<IResponse<User>> Create(UserDto userDto)
@@ -37,10 +40,12 @@ namespace Business.Services
                 newUser.RecordDate = DateTime.Now;
 
                 _userRepository.Create(newUser);
+                _logger.LogInformation("Kullanıcı başarıyla oluşturuldu.", newUser.Name);
                 return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(newUser, "Kullanıcı başarıyla oluşturuldu."));
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Kullanıcı oluşturulurken bir hata oluştu.", userDto.Name);
                 return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
