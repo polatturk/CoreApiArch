@@ -10,6 +10,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using DataAccess.DTOs;
 
 namespace Business.Services
 {
@@ -19,11 +21,14 @@ namespace Business.Services
         // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<Author> _authorRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<AuthorService> _logger;
 
-        public AuthorService(IGenericRepository<Author> authorRepository, IMapper mapper)
+
+        public AuthorService(IGenericRepository<Author> authorRepository, IMapper mapper, ILogger<AuthorService> logger)
         {
             _authorRepository = authorRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public Task<IResponse<Author>> Create(AuthorDto authorDto)
@@ -39,10 +44,12 @@ namespace Business.Services
                 newAuthor.RecordDate = DateTime.Now;
 
                 _authorRepository.Create(newAuthor);
+                _logger.LogInformation("Yazar başarıyla oluşturuldu.", newAuthor.Name);
                 return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(newAuthor, "Yazar başarıyla oluşturuldu."));
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Yazar oluşturulurken bir hata oluştu.", authorDto.Name);
                 return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
