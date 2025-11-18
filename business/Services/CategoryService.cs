@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Business.Services
 {
@@ -18,12 +19,13 @@ namespace Business.Services
         // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<Category> _categoryRepository;
         private readonly IMapper _mapper;
+        private readonly ILogger<CategoryService> _logger;
 
-
-        public CategoryService(IGenericRepository<Category> categoryRepository, IMapper mapper)
+        public CategoryService(IGenericRepository<Category> categoryRepository, IMapper mapper, ILogger<CategoryService> logger)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public Task<IResponse<Category>> Create(CategoryDto categoryDto)
@@ -39,10 +41,13 @@ namespace Business.Services
                 newCategory.RecordDate = DateTime.Now;
 
                 _categoryRepository.Create(newCategory);
+                _logger.LogInformation("Kategori başarıyla oluşturuldu.", newCategory.Name);
+
                 return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Success(newCategory, "Kategori başarıyla oluşturuldu."));
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Kategori oluşturulurken bir hata oluştu.", categoryDto.Name);
                 return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
