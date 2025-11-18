@@ -67,8 +67,9 @@ namespace Business.Services
                 _logger.LogInformation("Kategori başarıyla silindi.", category.Name);
                 return ResponseGeneric<Category>.Success(category, "Kategori başarıyla silindi.");
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Kategori silinirken bir hata oluştu.", null);
                 return ResponseGeneric<Category>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
