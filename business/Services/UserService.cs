@@ -45,7 +45,7 @@ namespace Business.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Kullanıcı oluşturulurken bir hata oluştu.", userDto.Name);
+                _logger.LogError(ex, "Kullanıcı oluşturulurken bir hata oluştu.", null);
                 return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
@@ -62,10 +62,12 @@ namespace Business.Services
 
                 }
                 _userRepository.Delete(user);
+                _logger.LogInformation("Kullanıcı başarıyla silindi.", user.Name);
                 return ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla silindi.");
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Kullanıcı silinirken bir hata oluştu.", null);
                 return ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
