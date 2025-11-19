@@ -46,7 +46,7 @@ namespace Business.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Kitap oluşturulurken bir hata oluştu.", bookDto.Title);
+                _logger.LogError(ex, "Kitap oluşturulurken bir hata oluştu.", null);
                 return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
@@ -63,10 +63,12 @@ namespace Business.Services
 
                 }
                 _bookRepository.Delete(book);
+                _logger.LogInformation("Kitap başarıyla silindi.", book.Title);
                 return ResponseGeneric<Book>.Success(book, "Kitap başarıyla silindi.");
             }
-            catch 
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Kitap silinirken bir hata oluştu.", null);
                 return ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
