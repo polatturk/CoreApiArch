@@ -49,7 +49,7 @@ namespace Business.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Yazar oluşturulurken bir hata oluştu.", authorDto.Name);
+                _logger.LogError(ex, "Yazar oluşturulurken bir hata oluştu.", null);
                 return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
@@ -66,10 +66,12 @@ namespace Business.Services
 
                 }
                 _authorRepository.Delete(author);
+                _logger.LogInformation("Yazar başarıyla silindi.", author.Name);
                 return ResponseGeneric<Author>.Success(author, "Yazar başarıyla silindi.");
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Yazar silinirken bir hata oluştu.", null);
                 return ResponseGeneric<Author>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
