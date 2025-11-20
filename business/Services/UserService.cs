@@ -140,10 +140,12 @@ namespace Business.Services
 
                 }
                 _userRepository.Update(user);
+                _logger.LogInformation("Kullanıcı başarıyla güncellendi.", user.Name);
                 return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla güncellendi."));
             }
-            catch 
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Beklenmeyen bir hata oluştu.", null);
                 return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
