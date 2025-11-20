@@ -143,10 +143,12 @@ namespace Business.Services
 
                 }
                 _categoryRepository.Update(category);
+                _logger.LogInformation("Kategori başarıyla güncellendi.", category.Name);
                 return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Success(category, "Kategori başarıyla güncellendi."));
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "bir hata oluştu.", null);
                 return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Kategori bulunamadı."));
             }
         }
