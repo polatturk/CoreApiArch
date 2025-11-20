@@ -163,10 +163,12 @@ namespace Business.Services
 
                 }
                 _bookRepository.Update(book);
+                _logger.LogInformation("Kitap başarıyla güncellendi.", book.Title);
                 return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Success(book, "Kitap başarıyla güncellendi."));
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Beklenmeyen bir hata oluştu.", null);
                 return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
