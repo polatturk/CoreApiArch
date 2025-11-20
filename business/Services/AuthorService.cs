@@ -148,10 +148,12 @@ namespace Business.Services
 
                 }
                 _authorRepository.Update(author);
+                _logger.LogInformation("Yazar başarıyla güncellendi.", author.Name);
                 return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(author, "Yazar başarıyla güncellendi."));
             }
-            catch
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "Beklenmeyen bir hata oluştu.", null);
                 return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
