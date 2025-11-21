@@ -153,6 +153,26 @@ namespace Business.Services
             }
         }
 
+        public IResponse<IEnumerable<BookListDto>> GetBooksByAuthorId(int authorId)
+        {
+            try
+            {
+                var booksInAuthor = _bookRepository.GetAll().Where(x => x.AuthorId == authorId).ToList();
+
+                var bookDtos = _mapper.Map<IEnumerable<BookListDto>>(booksInAuthor);
+
+                if (bookDtos == null || bookDtos.ToList().Count == 0)
+                {
+                    return ResponseGeneric<IEnumerable<BookListDto>>.Error("kitap bulunamadı.");
+                }
+                return ResponseGeneric<IEnumerable<BookListDto>>.Success(bookDtos, "kitaplar başarıyla listelendi.");
+            }
+            catch
+            {
+
+                return ResponseGeneric<IEnumerable<BookListDto>>.Error("Bir hata oluştu.");
+            }
+        }
         public Task<IResponse<Book>> Update(Book book)
         {
             try

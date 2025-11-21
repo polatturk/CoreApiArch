@@ -17,7 +17,7 @@ namespace Business.Interfaces
         Task<IResponse<Book>> Update(Book book);
         IResponse<Book> Delete(int id);
         IResponse<IEnumerable<BookListDto>> GetByName(string name);
-        IResponse<IEnumerable<BookListDto>> GetBooksByCategoryId(int categoryId); 
-
+        IResponse<IEnumerable<BookListDto>> GetBooksByCategoryId(int categoryId);
+        IResponse<IEnumerable<BookListDto>> GetBooksByAuthorId(int authorId);
     }
 }

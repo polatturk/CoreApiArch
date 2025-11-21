@@ -87,5 +87,18 @@ namespace CoreApiArch.Controllers
             return Ok(result);
         }
 
+        [HttpGet("GetBooksByAuthorId")]
+        public IActionResult GetBooksByAuthorId(int authorId)
+        {
+            var result = _bookService.GetBooksByAuthorId(authorId);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound("Kitap Bulunamadı.");
+            }
+
+            return Ok(result);
+        }
+
     }
 }
