@@ -142,9 +142,9 @@ namespace Business.Services
 
                 if (bookDtos == null || bookDtos.ToList().Count == 0)
                 {
-                    return ResponseGeneric<IEnumerable<BookListDto>>.Error("Kategori bulunamadı.");
+                    return ResponseGeneric<IEnumerable<BookListDto>>.Error("Bu kategoriye ait kitap bulunamadı.");
                 }
-                return ResponseGeneric<IEnumerable<BookListDto>>.Success(bookDtos, "Kategoriler başarıyla listelendi.");
+                return ResponseGeneric<IEnumerable<BookListDto>>.Success(bookDtos, "kitaplar başarıyla listelendi.");
             }
             catch
             {
