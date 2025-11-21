@@ -20,7 +20,7 @@ namespace Business.Services
         private readonly IMapper _mapper;
         private readonly ILogger<UserService> _logger;
 
-        public UserService(IGenericRepository<User> userRepository, Mapper mapper, ILogger<UserService> logger)
+        public UserService(IGenericRepository<User> userRepository, IMapper mapper, ILogger<UserService> logger)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -122,7 +122,7 @@ namespace Business.Services
                 {
                     return ResponseGeneric<IEnumerable<UserListDto>>.Error("Kullanıcılar bulunamadı.");
                 }
-                return ResponseGeneric<IEnumerable<UserListDto>>.Success(userListDtos, "Kullanıcıllar başarıyla listelendi.");
+                return ResponseGeneric<IEnumerable<UserListDto>>.Success(userListDtos, "Kullanıcılar başarıyla listelendi.");
             }
             catch
             {
