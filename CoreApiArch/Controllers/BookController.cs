@@ -73,5 +73,19 @@ namespace CoreApiArch.Controllers
             return Ok(result);
 
         }
+
+        [HttpGet("GetBooksByCategoryId")]
+        public IActionResult GetBooksByCategoryId(int categoryId) 
+        {
+            var result = _bookService.GetBooksByCategoryId(categoryId);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound("Kitap Bulunamadı.");
+            }
+
+            return Ok(result);
+        }
+
     }
 }

@@ -132,7 +132,7 @@ namespace Business.Services
             }
         }
 
-        public IResponse<IEnumerable<BookListDto>> GetCategoryByCategoryId(int categoryId)
+        public IResponse<IEnumerable<BookListDto>> GetBooksByCategoryId(int categoryId)
         {
             try
             {
