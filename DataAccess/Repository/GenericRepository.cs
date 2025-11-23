@@ -46,5 +46,10 @@ namespace DataAccess.Repository
             _dbset.Update(entity);
             _context.SaveChanges();
         }
+
+        public IQueryable<TEntity> Queryable()
+        {
+            return _dbset.AsQueryable();
+        }
     }
 }

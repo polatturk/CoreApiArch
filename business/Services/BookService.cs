@@ -173,23 +173,49 @@ namespace Business.Services
                 return ResponseGeneric<IEnumerable<BookListDto>>.Error("Bir hata oluştu.");
             }
         }
-        public Task<IResponse<Book>> Update(Book book)
+        public Task<IResponse<BookUpdateDto>> Update(BookUpdateDto bookUpdateDto)
         {
             try
             {
-                if (book == null)
+                var bookEntity = _bookRepository.GetByIdAsync(bookUpdateDto.Id).Result;
+                if (bookEntity == null)
                 {
-                    return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Kitap bulunamadı."));
+                    return Task.FromResult<IResponse<BookUpdateDto>>(ResponseGeneric<BookUpdateDto>.Error("Kitap bulunamadı."));
 
                 }
-                _bookRepository.Update(book);
-                _logger.LogInformation("Kitap başarıyla güncellendi.", book.Title);
-                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Success(book, "Kitap başarıyla güncellendi."));
+
+                if (!string.IsNullOrEmpty(bookUpdateDto.Title))
+                {
+                    bookEntity.Title = bookUpdateDto.Title;
+                }
+
+                if (!string.IsNullOrEmpty(bookUpdateDto.Description))
+                {
+                    bookEntity.Description = bookUpdateDto.Description;
+                }
+
+                if (bookUpdateDto.CountOfPage != null)
+                {
+                    bookEntity.CountOfPage = bookUpdateDto.CountOfPage.Value;
+                }
+
+                if (bookUpdateDto.AuthorId != null)
+                {
+                    bookEntity.AuthorId = bookUpdateDto.AuthorId.Value;
+                }
+
+                if (bookUpdateDto.CategoryId != null)
+                {
+                    bookEntity.CategoryId = bookUpdateDto.CategoryId.Value;
+                }
+                _bookRepository.Update(bookEntity);
+                _logger.LogInformation("Kitap başarıyla güncellendi.", bookUpdateDto.Title);
+                return Task.FromResult<IResponse<BookUpdateDto>>(ResponseGeneric<BookUpdateDto>.Success(bookUpdateDto, "Kitap başarıyla güncellendi."));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Beklenmeyen bir hata oluştu.", null);
-                return Task.FromResult<IResponse<Book>>(ResponseGeneric<Book>.Error("Beklenmeyen bir hata oluştu."));
+                return Task.FromResult<IResponse<BookUpdateDto>>(ResponseGeneric<BookUpdateDto>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
     }
