@@ -74,6 +74,25 @@ namespace CoreApiArch.Controllers
 
         }
 
+        [HttpPut("Update")]
+        public IActionResult Update([FromBody] BookUpdateDto bookUpdateDto)
+        {
+            if (bookUpdateDto == null)
+            {
+                return BadRequest("Kitap bilgileri boş olamaz.");
+
+            }
+
+            var result = _bookService.Update(bookUpdateDto);
+
+            if (!result.Result.IsSuccess)
+            {
+                return BadRequest("Kitap güncellenemedi.");
+            }
+            return Ok(result);
+
+        }
+
         [HttpGet("GetBooksByCategoryId")]
         public IActionResult GetBooksByCategoryId(int categoryId) 
         {
