@@ -133,23 +133,35 @@ namespace Business.Services
             }
         }
 
-        public Task<IResponse<Category>> Update(Category category)
+        public Task<IResponse<CategoryUpdateDto>> Update(CategoryUpdateDto categoryUpdateDto)
         {
             try
             {
-                if (category == null)
+                var categoryEntity = _categoryRepository.GetByIdAsync(categoryUpdateDto.Id).Result;
+                if (categoryEntity == null)
                 {
-                    return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Kategori bulunamadı."));
+                    return Task.FromResult<IResponse<CategoryUpdateDto>>(ResponseGeneric<CategoryUpdateDto>.Error("Kategori bulunamadı."));
 
                 }
-                _categoryRepository.Update(category);
-                _logger.LogInformation("Kategori başarıyla güncellendi.", category.Name);
-                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Success(category, "Kategori başarıyla güncellendi."));
+
+                if (!string.IsNullOrEmpty(categoryUpdateDto.Name))
+                {
+                    categoryEntity.Name = categoryUpdateDto.Name;
+                }
+
+                if (!string.IsNullOrEmpty(categoryUpdateDto.Description))
+                {
+                    categoryEntity.Description = categoryUpdateDto.Description;
+                }
+
+                _categoryRepository.Update(categoryEntity);
+                _logger.LogInformation("Kategori başarıyla güncellendi.", categoryUpdateDto.Name);
+                return Task.FromResult<IResponse<CategoryUpdateDto>>(ResponseGeneric<CategoryUpdateDto>.Success(categoryUpdateDto, "Kategori başarıyla güncellendi."));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "bir hata oluştu.", null);
-                return Task.FromResult<IResponse<Category>>(ResponseGeneric<Category>.Error("Kategori bulunamadı."));
+                _logger.LogError(ex, "Beklenmeyen bir hata oluştu.", null);
+                return Task.FromResult<IResponse<CategoryUpdateDto>>(ResponseGeneric<CategoryUpdateDto>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
     }

@@ -14,7 +14,7 @@ namespace Business.Interfaces
         IResponse<IEnumerable<CategoryListDto>> ListAll();
         IResponse<CategoryListDto> GetById(int id);
         Task<IResponse<Category>> Create(CategoryDto categoryDto);
-        Task<IResponse<Category>> Update(Category category);
+        Task<IResponse<CategoryUpdateDto>> Update(CategoryUpdateDto categoryUpdateDto);
         IResponse<Category> Delete(int id);
         IResponse<IEnumerable<CategoryListDto>> GetByName(string name);
     }
