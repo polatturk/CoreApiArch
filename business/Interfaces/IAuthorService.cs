@@ -15,7 +15,7 @@ namespace Business.Interfaces
         IResponse<IEnumerable<AuthorListDto>> ListAll();
         IResponse<AuthorListDto> GetById(int id);
         Task<IResponse<Author>> Create(AuthorDto author);
-        Task<IResponse<Author>> Update(Author author);
+        Task<IResponse<AuthorUpdateDto>> Update(AuthorUpdateDto authorUpdateDto);
         IResponse<Author> Delete(int id);
         IResponse<IEnumerable<AuthorListDto>> GetByName(string name);
     }

@@ -138,23 +138,44 @@ namespace Business.Services
             }
         }
 
-        public Task<IResponse<Author>> Update(Author author)
+        public Task<IResponse<AuthorUpdateDto>> Update(AuthorUpdateDto authorUpdateDto)
         {
             try
             {
-                if (author == null)
+                var authorEntity = _authorRepository.GetByIdAsync(authorUpdateDto.Id).Result;
+                if (authorEntity == null)
                 {
-                    return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Yazar bulunamadı."));
+                    return Task.FromResult<IResponse<AuthorUpdateDto>>(ResponseGeneric<AuthorUpdateDto>.Error("Yazar bulunamadı."));
 
                 }
-                _authorRepository.Update(author);
-                _logger.LogInformation("Yazar başarıyla güncellendi.", author.Name);
-                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Success(author, "Yazar başarıyla güncellendi."));
+
+                if (authorUpdateDto.Name != null)
+                {
+                    authorEntity.Name = authorUpdateDto.Name;
+                }
+
+                if (authorUpdateDto.Surname != null)
+                {
+                    authorEntity.Surname = authorUpdateDto.Surname;
+                }
+
+                if (authorUpdateDto.PlaceOfBirth != null)
+                {
+                    authorEntity.PlaceOfBirth = authorUpdateDto.PlaceOfBirth;
+                }
+
+                if (authorUpdateDto.YearOfBirth != null)
+                {
+                    authorEntity.YearOfBirth = authorUpdateDto.YearOfBirth ?? authorEntity.YearOfBirth;
+                }
+                _authorRepository.Update(authorEntity);
+                _logger.LogInformation("Yazar başarıyla güncellendi.", authorUpdateDto.Name);
+                return Task.FromResult<IResponse<AuthorUpdateDto>>(ResponseGeneric<AuthorUpdateDto>.Success(authorUpdateDto, "Yazar başarıyla güncellendi."));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Beklenmeyen bir hata oluştu.", null);
-                return Task.FromResult<IResponse<Author>>(ResponseGeneric<Author>.Error("Beklenmeyen bir hata oluştu."));
+                return Task.FromResult<IResponse<AuthorUpdateDto>>(ResponseGeneric<AuthorUpdateDto>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
     }
