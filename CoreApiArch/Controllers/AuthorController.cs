@@ -76,5 +76,23 @@ namespace CoreApiArch.Controllers
             return Ok(result);
 
         }
+
+        [HttpPut("Update")]
+        public IActionResult Update([FromBody] AuthorUpdateDto authorUpdateDto)
+        {
+            if (authorUpdateDto == null)
+            {
+                return BadRequest("Yazar bilgileri boş olamaz.");
+            }
+
+            var result = _authorService.Update(authorUpdateDto);
+
+            if (!result.Result.IsSuccess)
+            {
+                return BadRequest("Yazar güncellenemedi.");
+            }
+            return Ok(result);
+
+        }
     }
 }
