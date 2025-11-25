@@ -1,5 +1,6 @@
 ﻿using Business.Interfaces;
 using Business.Services;
+using Core.DTOs;
 using DataAccess.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -69,6 +70,24 @@ namespace CoreApiArch.Controllers
             if (!result.Result.IsSuccess)
             {
                 return BadRequest("Kullanıcı oluşturulamadı.");
+            }
+            return Ok(result);
+
+        }
+
+        [HttpPut("Update")]
+        public IActionResult Update([FromBody] UserUpdateDto userUpdateDto)
+        {
+            if (userUpdateDto == null)
+            {
+                return BadRequest("Kullanıcı bilgileri boş olamaz.");
+            }
+
+            var result = _userService.Update(userUpdateDto);
+
+            if (!result.Result.IsSuccess)
+            {
+                return BadRequest("Kullanıcı güncellenemedi.");
             }
             return Ok(result);
 
