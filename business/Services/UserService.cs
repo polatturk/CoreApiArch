@@ -130,23 +130,48 @@ namespace Business.Services
             }
         }
 
-        public Task<IResponse<User>> Update(User user)
+        public Task<IResponse<UserUpdateDto>> Update(UserUpdateDto userUpdateDto)
         {
             try
             {
-                if (user == null)
+                var userEntity = _userRepository.GetByIdAsync(userUpdateDto.Id).Result;
+                if (userEntity == null)
                 {
-                    return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Kullanıcı bulunamadı."));
+                    return Task.FromResult<IResponse<UserUpdateDto>>(ResponseGeneric<UserUpdateDto>.Error("Kullanıcı bulunamadı."));
 
                 }
-                _userRepository.Update(user);
-                _logger.LogInformation("Kullanıcı başarıyla güncellendi.", user.Name);
-                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla güncellendi."));
+
+                if (userUpdateDto.Name != null)
+                {
+                    userEntity.Name = userUpdateDto.Name;
+                }
+                if (userUpdateDto.Surname != null)
+                {
+                    userEntity.Surname = userUpdateDto.Surname;
+                }
+                if (userUpdateDto.Username != null)
+                {
+                    userEntity.Username = userUpdateDto.Username;
+                }
+
+                if (userUpdateDto.Email != null)
+                {
+                    userEntity.Email = userUpdateDto.Email;
+                }
+
+                if (userUpdateDto.Password != null)
+                {
+                    userEntity.Password = userUpdateDto.Password;
+                }
+                
+                _userRepository.Update(userEntity);
+                _logger.LogInformation("Kullanıcı başarıyla güncellendi.", userUpdateDto.Name);
+                return Task.FromResult<IResponse<UserUpdateDto>>(ResponseGeneric<UserUpdateDto>.Success(userUpdateDto, "Kullanıcı başarıyla güncellendi."));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Beklenmeyen bir hata oluştu.", null);
-                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu."));
+                return Task.FromResult<IResponse<UserUpdateDto>>(ResponseGeneric<UserUpdateDto>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
     }
