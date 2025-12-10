@@ -58,21 +58,41 @@ namespace CoreApiArch.Controllers
         }
 
         [HttpPost("Create")]
-        public IActionResult Create([FromBody] UserDto userDto)
+        public IActionResult Create([FromBody] UserDto user)
         {
-            if (userDto == null)
+            if (user == null)
             {
                 return BadRequest("Kullanıcı bilgileri boş olamaz.");
             }
 
-            var result = _userService.Create(userDto);
-
-            if (!result.Result.IsSuccess)
+            var result = _userService.Create(user);
+            if (result.IsSuccess)
             {
-                return BadRequest("Kullanıcı oluşturulamadı.");
+                return Ok(result);
             }
-            return Ok(result);
+            else
+            {
+                return BadRequest(result.Message);
+            }
+        }
 
+        [HttpPost("Login")]
+        public IActionResult Login([FromBody] UserLoginDto user)
+        {
+            if (user == null)
+            {
+                return BadRequest("Kullanıcı bilgileri boş olamaz.");
+            }
+
+            var result = _userService.Login(user);
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result.Message);
+            }
         }
 
         [HttpPut("Update")]
