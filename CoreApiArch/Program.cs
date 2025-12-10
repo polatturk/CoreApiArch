@@ -7,6 +7,8 @@ using Business.MapProfile;
 using Microsoft.Extensions.DependencyInjection;
 using Core.Entities;
 using Serilog;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
 
 
 namespace CoreApiArch
@@ -21,6 +23,25 @@ namespace CoreApiArch
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Host.UseSerilog(); // Serilog'u kullanmak için ekleyin
+
+
+            //Jwt Yapılandırması
+            builder.Services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
+            });
 
             // Add services to the container.
             builder.Services.AddControllers();
