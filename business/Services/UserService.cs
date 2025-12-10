@@ -4,10 +4,15 @@ using Business.Response;
 using Core.Entities;
 using DataAccess.DTOs;
 using DataAccess.Repository;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,37 +22,90 @@ namespace Business.Services
     {
         // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<User> _userRepository;
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
-        private readonly ILogger<UserService> _logger;
 
-        public UserService(IGenericRepository<User> userRepository, IMapper mapper, ILogger<UserService> logger)
+
+        public UserService(IGenericRepository<User> userRepository, IConfiguration configuration, IMapper mapper)
         {
             _userRepository = userRepository;
-            _mapper = mapper;
-            _logger = logger;
+            _configuration = configuration;
+            _mapper = mapper;   
         }
 
-        public Task<IResponse<User>> Create(UserDto userDto)
+        public IResponse<UserDto> Create(UserDto user)
         {
-            try
+            if (user == null)
             {
-                if (userDto == null)
-                {
-                    return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Kullanıcı bilgileri boş olamaz."));
-                }
-
-                var newUser = _mapper.Map<User>(userDto);
-                newUser.RecordDate = DateTime.Now;
-
-                _userRepository.Create(newUser);
-                _logger.LogInformation("Kullanıcı başarıyla oluşturuldu.", newUser.Name);
-                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Success(newUser, "Kullanıcı başarıyla oluşturuldu."));
+                ResponseGeneric<UserDto>.Error("Kullanıcı bilgileri boş olamaz.");
             }
-            catch (Exception ex)
+
+            // Kullanıcı adı veya e-posta adresi boş olamaz
+            if (string.IsNullOrEmpty(user.Username) && string.IsNullOrEmpty(user.Email))
             {
-                _logger.LogError(ex, "Kullanıcı oluşturulurken bir hata oluştu.", null);
-                return Task.FromResult<IResponse<User>>(ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu."));
+                return ResponseGeneric<UserDto>.Error("Kullanıcı adı veya e-posta adresi boş olamaz.");
             }
+
+            // Kullanıcı adı veya e-posta adresi zaten var mı kontrol et
+            var existingUser = _userRepository.GetAll().FirstOrDefault(x => x.Username == user.Username || x.Email == user.Email);
+            if (existingUser != null)
+            {
+                return ResponseGeneric<UserDto>.Error("Bu kullanıcı adı veya e-posta adresi zaten kullanılıyor.");
+            }
+
+            //Gelen şifre alanını hashle
+            var hashedPassword = HashPasword(user.Password);
+
+            //Geken DTO'yu Entity'e dönüştürüyoruz.
+            var newUser = new User
+            {
+                Name = user.Name,
+                Surname = user.Surname,
+                Username = user.Username,
+                Email = user.Email,
+                Password = hashedPassword, // Şifreyi hashlemeden kaydediyoruz
+            };
+            newUser.RecordDate = DateTime.Now;
+            _userRepository.Create(newUser);
+
+            return ResponseGeneric<UserDto>.Success(null, "Kullanıcı kaydı oluşturuldu.");
+        }
+
+        public IResponse<string> Login(UserLoginDto user)
+        {
+            if ((user.Username == null || user.Email == null) && user.Password == null)
+            {
+                return ResponseGeneric<string>.Error("Kullanıcı adı veya e-posta adresi boş olamaz.");
+            }
+
+            var checkUser = _userRepository.GetAll().FirstOrDefault(x => (x.Username == user.Username || x.Email == user.Email) && x.Password == HashPasword(user.Password));
+
+
+            if (checkUser == null)
+            {
+                return ResponseGeneric<string>.Error("Kullanıcı adı veya şifre hatalı.");
+            }
+
+            var generatedToken = GenerateJwtToken(checkUser);
+
+            return ResponseGeneric<string>.Success(generatedToken, "Giriş başarılı.");
+
+        }
+
+        private string HashPasword(string password)
+        {
+            //TODO: SecretKey'i config dosyasından al
+            string secretKey = "";
+
+
+            using (var sha256 = SHA256.Create())
+            {
+                var combinedPassword = password + secretKey;
+                var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(combinedPassword));
+                var hashedPassword = Convert.ToBase64String(bytes);
+                return hashedPassword;
+            }
+
         }
 
         public IResponse<User> Delete(int id)
@@ -62,15 +120,38 @@ namespace Business.Services
 
                 }
                 _userRepository.Delete(user);
-                _logger.LogInformation("Kullanıcı başarıyla silindi.", user.Name);
                 return ResponseGeneric<User>.Success(user, "Kullanıcı başarıyla silindi.");
             }
-            catch (Exception ex)
+            catch
             {
-                _logger.LogError(ex, "Kullanıcı silinirken bir hata oluştu.", null);
                 return ResponseGeneric<User>.Error("Beklenmeyen bir hata oluştu.");
             }
         }
+
+        private string GenerateJwtToken(User user)
+        {
+            var claims = new List<Claim>
+        {
+                new Claim(ClaimTypes.Name, user.Name),
+                new Claim(ClaimTypes.Sid, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email),
+        };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                               issuer: _configuration["Jwt:Issuer"],
+                                              audience: _configuration["Jwt:Audience"],
+                                                             claims: claims,
+                                                                            expires: DateTime.Now.AddMinutes(1),
+                                                                                           signingCredentials: creds);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+
+
+        }
+
 
         public IResponse<UserListDto> GetById(int id)
         {
@@ -163,14 +244,12 @@ namespace Business.Services
                 {
                     userEntity.Password = userUpdateDto.Password;
                 }
-                
+
                 _userRepository.Update(userEntity);
-                _logger.LogInformation("Kullanıcı başarıyla güncellendi.", userUpdateDto.Name);
                 return Task.FromResult<IResponse<UserUpdateDto>>(ResponseGeneric<UserUpdateDto>.Success(userUpdateDto, "Kullanıcı başarıyla güncellendi."));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Beklenmeyen bir hata oluştu.", null);
                 return Task.FromResult<IResponse<UserUpdateDto>>(ResponseGeneric<UserUpdateDto>.Error("Beklenmeyen bir hata oluştu."));
             }
         }
