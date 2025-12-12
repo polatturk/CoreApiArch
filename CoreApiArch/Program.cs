@@ -34,7 +34,7 @@ namespace CoreApiArch
                     options.PermitLimit = 5;
                     options.Window = TimeSpan.FromSeconds(10);
                     options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
-                    options.QueueLimit = 2; // 2 istek bekletilebilir
+                    options.QueueLimit = 2; // kuyruk yapısı burası 2 istek bekletilebilir
                 });
 
 

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace CoreApiArch.Controllers
 {
@@ -21,6 +22,7 @@ namespace CoreApiArch.Controllers
             _authorService = authorService;
         }
 
+        [EnableRateLimiting("RateLimiter2")]
         [AllowAnonymous]
         [HttpGet("ListAll")]
         public IActionResult GetAll()

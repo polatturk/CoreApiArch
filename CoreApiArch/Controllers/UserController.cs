@@ -4,6 +4,7 @@ using Core.DTOs;
 using DataAccess.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace CoreApiArch.Controllers
 {
@@ -18,6 +19,7 @@ namespace CoreApiArch.Controllers
             _userService = userService;
         }
 
+        [EnableRateLimiting("RateLimiter2")]
         [HttpGet("ListAll")]
         public IActionResult GetAll()
         {

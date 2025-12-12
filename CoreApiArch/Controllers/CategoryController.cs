@@ -3,6 +3,7 @@ using Business.Services;
 using DataAccess.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace CoreApiArch.Controllers
 {
@@ -17,6 +18,7 @@ namespace CoreApiArch.Controllers
             _categoryService = categoryService;
         }
 
+        [EnableRateLimiting("RateLimiter2")]
         [HttpGet("ListAll")]
         public IActionResult GetAll()
         {
