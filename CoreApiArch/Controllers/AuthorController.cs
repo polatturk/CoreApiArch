@@ -1,12 +1,14 @@
 ﻿using Business.Interfaces;
 using Core.DTOs;
 using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoreApiArch.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthorController : ControllerBase
@@ -19,6 +21,7 @@ namespace CoreApiArch.Controllers
             _authorService = authorService;
         }
 
+        [AllowAnonymous]
         [HttpGet("ListAll")]
         public IActionResult GetAll()
         {
@@ -32,6 +35,7 @@ namespace CoreApiArch.Controllers
             return Ok(authors);
         }
 
+        [AllowAnonymous]
         [HttpGet("GetByName")]
         public IActionResult GetByName(string name)
         {
