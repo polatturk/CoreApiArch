@@ -9,6 +9,7 @@ using Core.Entities;
 using Serilog;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 namespace CoreApiArch
@@ -24,6 +25,26 @@ namespace CoreApiArch
 
             builder.Host.UseSerilog(); // Serilog'u kullanmak için ekleyin
 
+            //RateLimiting Yapılandırması
+            builder.Services.AddRateLimiter(options =>
+            {
+
+                options.AddFixedWindowLimiter("RateLimiter", options =>
+                {
+                    options.PermitLimit = 5;
+                    options.Window = TimeSpan.FromSeconds(10);
+                    options.QueueProcessingOrder = System.Threading.RateLimiting.QueueProcessingOrder.OldestFirst;
+                    options.QueueLimit = 2; // 2 istek bekletilebilir
+                });
+
+
+                options.AddFixedWindowLimiter("RateLimiter2", options =>
+                {
+                    options.PermitLimit = 5;
+                    options.Window = TimeSpan.FromSeconds(10);
+                });
+
+            });
 
             //Jwt Yapılandırması
             builder.Services.AddAuthentication(options => {
@@ -119,6 +140,8 @@ namespace CoreApiArch
             }
 
             app.UseHttpsRedirection();
+
+            app.UseRateLimiter();
 
             app.UseAuthorization();
 
