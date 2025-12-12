@@ -31,6 +31,7 @@ namespace CoreApiArch.Controllers
             return Ok(books);
         }
 
+        [EnableRateLimiting("RateLimiter2")]
         [HttpGet("GetByName")]
         public IActionResult GetByName(string name)
         {

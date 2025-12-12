@@ -37,6 +37,7 @@ namespace CoreApiArch.Controllers
             return Ok(authors);
         }
 
+        [EnableRateLimiting("RateLimiter2")]
         [AllowAnonymous]
         [HttpGet("GetByName")]
         public IActionResult GetByName(string name)
