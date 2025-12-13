@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.RateLimiting;
 
 namespace CoreApiArch.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -21,7 +20,6 @@ namespace CoreApiArch.Controllers
             _userService = userService;
         }
 
-        [AllowAnonymous]
         [EnableRateLimiting("RateLimiter2")]
         [HttpGet("ListAll")]
         public IActionResult GetAll()
@@ -36,7 +34,6 @@ namespace CoreApiArch.Controllers
             return Ok(users);
         }
 
-        [AllowAnonymous]
         [EnableRateLimiting("RateLimiter2")]
         [HttpGet("GetByName")]
         public IActionResult GetByName(string name)
