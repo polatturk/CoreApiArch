@@ -1,12 +1,14 @@
 ﻿using Business.Interfaces;
 using Business.Services;
 using DataAccess.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace CoreApiArch.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -18,6 +20,7 @@ namespace CoreApiArch.Controllers
             _categoryService = categoryService;
         }
 
+        [AllowAnonymous]
         [EnableRateLimiting("RateLimiter2")]
         [HttpGet("ListAll")]
         public IActionResult GetAll()
@@ -26,12 +29,13 @@ namespace CoreApiArch.Controllers
 
             if (!categories.IsSuccess)
             {
-                return NotFound("Kategori bulunamadı.");
+                return NotFound(categories.Message);
             }
 
             return Ok(categories);
         }
 
+        [AllowAnonymous]
         [EnableRateLimiting("RateLimiter2")]
         [HttpGet("GetByName")]
         public IActionResult GetByName(string name)
@@ -40,7 +44,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound("Kategori bulunamadı.");
+                return NotFound(result.Message);
             }
 
             return Ok(result);
@@ -53,7 +57,7 @@ namespace CoreApiArch.Controllers
             var result = _categoryService.Delete(id);
             if (!result.IsSuccess)
             {
-                return BadRequest("Silme işlemi başarısız oldu.");
+                return BadRequest(result.Message);
             }
 
             return Ok(result);
@@ -71,7 +75,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.Result.IsSuccess)
             {
-                return BadRequest("Kategori oluşturulamadı.");
+                return BadRequest(result.Result.Message);
             }
             return Ok(result);
 
@@ -90,7 +94,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.Result.IsSuccess)
             {
-                return BadRequest("Kategori güncellenemedi.");
+                return BadRequest(result.Result.Message);
             }
             return Ok(result);
 

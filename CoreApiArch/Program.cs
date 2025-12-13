@@ -113,7 +113,7 @@ namespace CoreApiArch
             });
 
 
-            builder.Services.AddAutoMapper(typeof(MapProfile));
+            builder.Services.AddAutoMapper(typeof(MapProfile)); 
 
             //Servis Implamantasyonları
             //AddTransient: Her istekte yeni bir instance oluşturur.

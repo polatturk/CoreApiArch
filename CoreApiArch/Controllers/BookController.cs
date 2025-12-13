@@ -1,12 +1,14 @@
 ﻿using Business.Interfaces;
 using Core.DTOs;
 using DataAccess.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace CoreApiArch.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BookController : ControllerBase
@@ -17,6 +19,7 @@ namespace CoreApiArch.Controllers
             _bookService = bookService;
         }
 
+        [AllowAnonymous]
         [EnableRateLimiting("RateLimiter2")]
         [HttpGet("ListAll")]
         public IActionResult GetAll()
@@ -25,12 +28,14 @@ namespace CoreApiArch.Controllers
 
             if (!books.IsSuccess)
             {
-                return NotFound("Kitap bulunamadı.");
+                return NotFound(books.Message);
             }
 
             return Ok(books);
         }
 
+
+        [AllowAnonymous]
         [EnableRateLimiting("RateLimiter2")]
         [HttpGet("GetByName")]
         public IActionResult GetByName(string name)
@@ -39,7 +44,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound("Kitap bulunamadı.");
+                return NotFound(result.Message);
             }
 
             return Ok(result);
@@ -52,7 +57,7 @@ namespace CoreApiArch.Controllers
             var result = _bookService.Delete(id);
             if (!result.IsSuccess)
             {
-                return BadRequest("Silme işlemi başarısız oldu.");
+                return BadRequest(result.Message);
             }
 
             return Ok(result);
@@ -71,7 +76,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.Result.IsSuccess)
             {
-                return BadRequest("Kitap oluşturulamadı.");
+                return BadRequest(result.Result.Message);
             }
             return Ok(result);
 
@@ -90,12 +95,13 @@ namespace CoreApiArch.Controllers
 
             if (!result.Result.IsSuccess)
             {
-                return BadRequest("Kitap güncellenemedi.");
+                return BadRequest(result.Result.Message);
             }
             return Ok(result);
 
         }
 
+        [AllowAnonymous]
         [HttpGet("GetBooksByCategoryId")]
         public IActionResult GetBooksByCategoryId(int categoryId) 
         {
@@ -103,12 +109,13 @@ namespace CoreApiArch.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound("Kitap Bulunamadı.");
+                return NotFound(result.Message);
             }
 
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("GetBooksByAuthorId")]
         public IActionResult GetBooksByAuthorId(int authorId)
         {
@@ -116,7 +123,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound("Kitap Bulunamadı.");
+                return NotFound(result.Message);
             }
 
             return Ok(result);

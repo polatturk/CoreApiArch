@@ -2,12 +2,14 @@
 using Business.Services;
 using Core.DTOs;
 using DataAccess.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace CoreApiArch.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -19,6 +21,7 @@ namespace CoreApiArch.Controllers
             _userService = userService;
         }
 
+        [AllowAnonymous]
         [EnableRateLimiting("RateLimiter2")]
         [HttpGet("ListAll")]
         public IActionResult GetAll()
@@ -27,12 +30,13 @@ namespace CoreApiArch.Controllers
 
             if (!users.IsSuccess)
             {
-                return NotFound("Kullanıcı bulunamadı.");
+                return NotFound(users.Message);
             }
 
             return Ok(users);
         }
 
+        [AllowAnonymous]
         [EnableRateLimiting("RateLimiter2")]
         [HttpGet("GetByName")]
         public IActionResult GetByName(string name)
@@ -41,7 +45,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound("Kullanıcı bulunamadı.");
+                return NotFound(result.Message);
             }
 
             return Ok(result);
@@ -54,7 +58,7 @@ namespace CoreApiArch.Controllers
             var result = _userService.Delete(id);
             if (!result.IsSuccess)
             {
-                return BadRequest("Silme işlemi başarısız oldu.");
+                return BadRequest(result.Message);
             }
 
             return Ok(result);
@@ -110,7 +114,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.Result.IsSuccess)
             {
-                return BadRequest("Kullanıcı güncellenemedi.");
+                return BadRequest(result.Result.Message);
             }
             return Ok(result);
 

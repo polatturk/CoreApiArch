@@ -31,7 +31,7 @@ namespace CoreApiArch.Controllers
 
             if (!authors.IsSuccess)
             {
-                return NotFound("Yazar bulunamadı.");
+                return NotFound(authors.Message);
             }
 
             return Ok(authors);
@@ -46,7 +46,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.IsSuccess)
             {
-                return NotFound("Yazar bulunamadı.");
+                return NotFound(result.Message);
             }
 
             return Ok(result);
@@ -59,7 +59,7 @@ namespace CoreApiArch.Controllers
             var result = _authorService.Delete(id);
             if(!result.IsSuccess)
             {
-                return BadRequest("Silme işlemi başarısız oldu.");
+                return BadRequest(result.Message);
             }
 
             return Ok(result);
@@ -78,7 +78,7 @@ namespace CoreApiArch.Controllers
 
             if (!result.Result.IsSuccess)
             {
-                return BadRequest("Yazar oluşturulamadı.");
+                return BadRequest(result.Result.Message);
             }
             return Ok(result);
 
