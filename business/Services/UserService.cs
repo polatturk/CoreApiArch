@@ -131,11 +131,11 @@ namespace Business.Services
         private string GenerateJwtToken(User user)
         {
             var claims = new List<Claim>
-        {
+            {
                 new Claim(ClaimTypes.Name, user.Name),
                 new Claim(ClaimTypes.Sid, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-        };
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -144,14 +144,12 @@ namespace Business.Services
                                issuer: _configuration["Jwt:Issuer"],
                                               audience: _configuration["Jwt:Audience"],
                                                              claims: claims,
-                                                                            expires: DateTime.Now.AddMinutes(1),
+                                                                            expires: DateTime.Now.AddMinutes(30),
                                                                                            signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
 
-
         }
-
 
         public IResponse<UserListDto> GetById(int id)
         {
