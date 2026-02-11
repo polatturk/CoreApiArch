@@ -67,6 +67,18 @@ namespace CoreApiArch
             // Add services to the container.
             builder.Services.AddControllers();
 
+            // CORS Politikası Tanımlama
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowFlutter",
+                    policy =>
+                    {
+                        policy.AllowAnyOrigin() 
+                              .AllowAnyHeader()
+                              .AllowAnyMethod();
+                    });
+            });
+
             builder.Services.AddDbContext<APIContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -137,6 +149,7 @@ namespace CoreApiArch
             app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
+            app.UseCors("AllowFlutter");
 
             app.UseRateLimiter();
 

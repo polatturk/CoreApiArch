@@ -14,7 +14,7 @@ namespace Business.Interfaces
         IResponse<IEnumerable<UserListDto>> ListAll();
         IResponse<UserListDto> GetById(int id);
         IResponse<UserDto> Create(UserDto userDto);
-        public IResponse<string> Login(UserLoginDto user);
+        public IResponse<UserResponseDto> Login(UserLoginDto user);
         Task<IResponse<UserUpdateDto>> Update(UserUpdateDto userUpdateDto);
         IResponse<User> Delete(int id);
         IResponse<IEnumerable<UserListDto>> GetByName(string name);

@@ -25,6 +25,7 @@ namespace Business.MapProfile
 
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, UserListDto>().ReverseMap();
+            CreateMap<User, UserResponseDto>().ReverseMap();
         }
     }
 }

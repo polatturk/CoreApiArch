@@ -20,7 +20,6 @@ namespace Business.Services
 {
     public class UserService : IUserService
     {
-        // DI ile IGenericRepository alıyoruz.
         private readonly IGenericRepository<User> _userRepository;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
@@ -35,61 +34,46 @@ namespace Business.Services
 
         public IResponse<UserDto> Create(UserDto user)
         {
-            if (user == null)
-            {
-                ResponseGeneric<UserDto>.Error("Kullanıcı bilgileri boş olamaz.");
-            }
+            if (user == null) return ResponseGeneric<UserDto>.Error("Kullanıcı bilgileri boş olamaz.");
 
-            // Kullanıcı adı veya e-posta adresi boş olamaz
             if (string.IsNullOrEmpty(user.Username) && string.IsNullOrEmpty(user.Email))
-            {
                 return ResponseGeneric<UserDto>.Error("Kullanıcı adı veya e-posta adresi boş olamaz.");
-            }
 
-            // Kullanıcı adı veya e-posta adresi zaten var mı kontrol et
             var existingUser = _userRepository.GetAll().FirstOrDefault(x => x.Username == user.Username || x.Email == user.Email);
             if (existingUser != null)
-            {
                 return ResponseGeneric<UserDto>.Error("Bu kullanıcı adı veya e-posta adresi zaten kullanılıyor.");
-            }
 
-            //Gelen şifre alanını hashle
-            var hashedPassword = HashPasword(user.Password);
+            var newUser = _mapper.Map<User>(user);
 
-            //Geken DTO'yu Entity'e dönüştürüyoruz.
-            var newUser = new User
-            {
-                Name = user.Name,
-                Surname = user.Surname,
-                Username = user.Username,
-                Email = user.Email,
-                Password = hashedPassword, // Şifreyi hashlemeden kaydediyoruz
-            };
+            newUser.Password = HashPasword(user.Password);
             newUser.RecordDate = DateTime.Now;
+
             _userRepository.Create(newUser);
 
             return ResponseGeneric<UserDto>.Success(null, "Kullanıcı kaydı oluşturuldu.");
         }
 
-        public IResponse<string> Login(UserLoginDto user)
+        public IResponse<UserResponseDto> Login(UserLoginDto user)
         {
-            if ((user.Username == null || user.Email == null) && user.Password == null)
+            if (string.IsNullOrWhiteSpace(user.Username) && string.IsNullOrWhiteSpace(user.Email))
             {
-                return ResponseGeneric<string>.Error("Kullanıcı adı veya e-posta adresi boş olamaz.");
+                return ResponseGeneric<UserResponseDto>.Error("Kullanıcı adı veya e-posta adresi boş olamaz.");
             }
 
-            var checkUser = _userRepository.GetAll().FirstOrDefault(x => (x.Username == user.Username || x.Email == user.Email) && x.Password == HashPasword(user.Password));
-
+            var hashedPassword = HashPasword(user.Password);
+            var checkUser = _userRepository.GetAll().FirstOrDefault(x =>
+                (x.Username == user.Username || x.Email == user.Email) && x.Password == hashedPassword);
 
             if (checkUser == null)
             {
-                return ResponseGeneric<string>.Error("Kullanıcı adı veya şifre hatalı.");
+                return ResponseGeneric<UserResponseDto>.Error("Kullanıcı adı veya şifre hatalı.");
             }
 
-            var generatedToken = GenerateJwtToken(checkUser);
+            var loginResponse = _mapper.Map<UserResponseDto>(checkUser);
 
-            return ResponseGeneric<string>.Success(generatedToken, "Giriş başarılı.");
+            loginResponse.Token = GenerateJwtToken(checkUser);
 
+            return ResponseGeneric<UserResponseDto>.Success(loginResponse, "Giriş başarılı.");
         }
 
         private string HashPasword(string password)
